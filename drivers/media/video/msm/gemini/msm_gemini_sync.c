@@ -31,7 +31,7 @@ static int release_buf;
 static const int g_max_out_size = 0x7ff000;
 
 /*************** queue helper ****************/
-inline void msm_gemini_q_init(char const *name, struct msm_gemini_q *q_p)
+static inline void msm_gemini_q_init(char const *name, struct msm_gemini_q *q_p)
 {
 	GMN_DBG("%s:%d] %s\n", __func__, __LINE__, name);
 	q_p->name = name;
@@ -41,7 +41,7 @@ inline void msm_gemini_q_init(char const *name, struct msm_gemini_q *q_p)
 	q_p->unblck = 0;
 }
 
-inline void *msm_gemini_q_out(struct msm_gemini_q *q_p)
+static inline void *msm_gemini_q_out(struct msm_gemini_q *q_p)
 {
 	unsigned long flags;
 	struct msm_gemini_q_entry *q_entry_p = NULL;
@@ -67,7 +67,7 @@ inline void *msm_gemini_q_out(struct msm_gemini_q *q_p)
 	return data;
 }
 
-inline int msm_gemini_q_in(struct msm_gemini_q *q_p, void *data)
+static inline int msm_gemini_q_in(struct msm_gemini_q *q_p, void *data)
 {
 	unsigned long flags;
 
@@ -89,7 +89,7 @@ inline int msm_gemini_q_in(struct msm_gemini_q *q_p, void *data)
 	return 0;
 }
 
-inline int msm_gemini_q_in_buf(struct msm_gemini_q *q_p,
+static inline int msm_gemini_q_in_buf(struct msm_gemini_q *q_p,
 	struct msm_gemini_core_buf *buf)
 {
 	struct msm_gemini_core_buf *buf_p;
@@ -107,7 +107,7 @@ inline int msm_gemini_q_in_buf(struct msm_gemini_q *q_p,
 	return 0;
 }
 
-inline int msm_gemini_q_wait(struct msm_gemini_q *q_p)
+static inline int msm_gemini_q_wait(struct msm_gemini_q *q_p)
 {
 	int tm = MAX_SCHEDULE_TIMEOUT; /* 500ms */
 	int rc;
@@ -135,14 +135,14 @@ inline int msm_gemini_q_wait(struct msm_gemini_q *q_p)
 	return rc;
 }
 
-inline int msm_gemini_q_wakeup(struct msm_gemini_q *q_p)
+static inline int msm_gemini_q_wakeup(struct msm_gemini_q *q_p)
 {
 	GMN_DBG("%s:%d] %s\n", __func__, __LINE__, q_p->name);
 	wake_up(&q_p->wait);
 	return 0;
 }
 
-inline int msm_gemini_q_unblock(struct msm_gemini_q *q_p)
+static inline int msm_gemini_q_unblock(struct msm_gemini_q *q_p)
 {
 	GMN_DBG("%s:%d] %s\n", __func__, __LINE__, q_p->name);
 	q_p->unblck = 1;
@@ -150,7 +150,7 @@ inline int msm_gemini_q_unblock(struct msm_gemini_q *q_p)
 	return 0;
 }
 
-inline void msm_gemini_outbuf_q_cleanup(struct msm_gemini_q *q_p)
+static inline void msm_gemini_outbuf_q_cleanup(struct msm_gemini_q *q_p)
 {
 	struct msm_gemini_core_buf *buf_p;
 	GMN_DBG("%s:%d] %s\n", __func__, __LINE__, q_p->name);
@@ -166,7 +166,7 @@ inline void msm_gemini_outbuf_q_cleanup(struct msm_gemini_q *q_p)
 	q_p->unblck = 0;
 }
 
-inline void msm_gemini_q_cleanup(struct msm_gemini_q *q_p)
+static inline void msm_gemini_q_cleanup(struct msm_gemini_q *q_p)
 {
 	void *data;
 	GMN_DBG("%s:%d] %s\n", __func__, __LINE__, q_p->name);
@@ -182,7 +182,7 @@ inline void msm_gemini_q_cleanup(struct msm_gemini_q *q_p)
 
 /*************** event queue ****************/
 
-int msm_gemini_framedone_irq(struct msm_gemini_device *pgmn_dev,
+static int msm_gemini_framedone_irq(struct msm_gemini_device *pgmn_dev,
 	struct msm_gemini_core_buf *buf_in)
 {
 	int rc = 0;
@@ -209,7 +209,7 @@ int msm_gemini_framedone_irq(struct msm_gemini_device *pgmn_dev,
 	return rc;
 }
 
-int msm_gemini_evt_get(struct msm_gemini_device *pgmn_dev,
+static int msm_gemini_evt_get(struct msm_gemini_device *pgmn_dev,
 	void __user *to)
 {
 	struct msm_gemini_core_buf *buf_p;
@@ -240,14 +240,14 @@ int msm_gemini_evt_get(struct msm_gemini_device *pgmn_dev,
 	return 0;
 }
 
-int msm_gemini_evt_get_unblock(struct msm_gemini_device *pgmn_dev)
+static int msm_gemini_evt_get_unblock(struct msm_gemini_device *pgmn_dev)
 {
 	GMN_DBG("%s:%d] Enter\n", __func__, __LINE__);
 	msm_gemini_q_unblock(&pgmn_dev->evt_q);
 	return 0;
 }
 
-void msm_gemini_reset_ack_irq(struct msm_gemini_device *pgmn_dev)
+static void msm_gemini_reset_ack_irq(struct msm_gemini_device *pgmn_dev)
 {
 	GMN_DBG("%s:%d]\n", __func__, __LINE__);
 }
@@ -337,7 +337,7 @@ int msm_gemini_outmode_single_we_pingpong_irq(
 	return rc;
 }
 
-int msm_gemini_we_pingpong_irq(struct msm_gemini_device *pgmn_dev,
+static int msm_gemini_we_pingpong_irq(struct msm_gemini_device *pgmn_dev,
 	struct msm_gemini_core_buf *buf_in)
 {
 	int rc = 0;
@@ -378,7 +378,7 @@ int msm_gemini_we_pingpong_irq(struct msm_gemini_device *pgmn_dev,
 	return rc;
 }
 
-int msm_gemini_output_get(struct msm_gemini_device *pgmn_dev, void __user *to)
+static int msm_gemini_output_get(struct msm_gemini_device *pgmn_dev, void __user *to)
 {
 	struct msm_gemini_core_buf *buf_p;
 	struct msm_gemini_buf buf_cmd;
@@ -409,14 +409,14 @@ int msm_gemini_output_get(struct msm_gemini_device *pgmn_dev, void __user *to)
 	return 0;
 }
 
-int msm_gemini_output_get_unblock(struct msm_gemini_device *pgmn_dev)
+static int msm_gemini_output_get_unblock(struct msm_gemini_device *pgmn_dev)
 {
 	GMN_DBG("%s:%d] Enter\n", __func__, __LINE__);
 	msm_gemini_q_unblock(&pgmn_dev->output_rtn_q);
 	return 0;
 }
 
-int msm_gemini_set_output_buf(struct msm_gemini_device *pgmn_dev,
+static int msm_gemini_set_output_buf(struct msm_gemini_device *pgmn_dev,
 	void __user *arg)
 {
 	struct msm_gemini_buf buf_cmd;
@@ -453,7 +453,7 @@ int msm_gemini_set_output_buf(struct msm_gemini_device *pgmn_dev,
 	return 0;
 }
 
-int msm_gemini_output_buf_enqueue(struct msm_gemini_device *pgmn_dev,
+static int msm_gemini_output_buf_enqueue(struct msm_gemini_device *pgmn_dev,
 	void __user *arg)
 {
 	struct msm_gemini_buf buf_cmd;
@@ -490,7 +490,7 @@ int msm_gemini_output_buf_enqueue(struct msm_gemini_device *pgmn_dev,
 
 /*************** input queue ****************/
 
-int msm_gemini_fe_pingpong_irq(struct msm_gemini_device *pgmn_dev,
+static int msm_gemini_fe_pingpong_irq(struct msm_gemini_device *pgmn_dev,
 	struct msm_gemini_core_buf *buf_in)
 {
 	struct msm_gemini_core_buf *buf_out;
@@ -524,7 +524,7 @@ int msm_gemini_fe_pingpong_irq(struct msm_gemini_device *pgmn_dev,
 	return rc;
 }
 
-int msm_gemini_input_get(struct msm_gemini_device *pgmn_dev, void __user * to)
+static int msm_gemini_input_get(struct msm_gemini_device *pgmn_dev, void __user * to)
 {
 	struct msm_gemini_core_buf *buf_p;
 	struct msm_gemini_buf buf_cmd;
@@ -557,14 +557,14 @@ int msm_gemini_input_get(struct msm_gemini_device *pgmn_dev, void __user * to)
 	return 0;
 }
 
-int msm_gemini_input_get_unblock(struct msm_gemini_device *pgmn_dev)
+static int msm_gemini_input_get_unblock(struct msm_gemini_device *pgmn_dev)
 {
 	GMN_DBG("%s:%d] Enter\n", __func__, __LINE__);
 	msm_gemini_q_unblock(&pgmn_dev->input_rtn_q);
 	return 0;
 }
 
-int msm_gemini_input_buf_enqueue(struct msm_gemini_device *pgmn_dev,
+static int msm_gemini_input_buf_enqueue(struct msm_gemini_device *pgmn_dev,
 	void __user *arg)
 {
 	struct msm_gemini_core_buf *buf_p;
@@ -743,7 +743,7 @@ int __msm_gemini_open(struct msm_gemini_device *pgmn_dev)
 	return rc;
 }
 
-int __msm_gemini_release(struct msm_gemini_device *pgmn_dev)
+static int __msm_gemini_release(struct msm_gemini_device *pgmn_dev)
 {
 	GMN_DBG("%s:%d] Enter\n", __func__, __LINE__);
 	mutex_lock(&pgmn_dev->lock);
@@ -791,7 +791,7 @@ int __msm_gemini_release(struct msm_gemini_device *pgmn_dev)
 	return 0;
 }
 
-int msm_gemini_ioctl_hw_cmd(struct msm_gemini_device *pgmn_dev,
+static int msm_gemini_ioctl_hw_cmd(struct msm_gemini_device *pgmn_dev,
 	void * __user arg)
 {
 	struct msm_gemini_hw_cmd hw_cmd;
@@ -866,7 +866,7 @@ int msm_gemini_ioctl_hw_cmds(struct msm_gemini_device *pgmn_dev,
 	return 0;
 }
 
-int msm_gemini_start(struct msm_gemini_device *pgmn_dev, void * __user arg)
+static int msm_gemini_start(struct msm_gemini_device *pgmn_dev, void * __user arg)
 {
 	struct msm_gemini_core_buf *buf_out;
 	struct msm_gemini_core_buf *buf_out_free[2] = {NULL, NULL};
@@ -945,7 +945,7 @@ int msm_gemini_start(struct msm_gemini_device *pgmn_dev, void * __user arg)
 	return rc;
 }
 
-int msm_gemini_ioctl_reset(struct msm_gemini_device *pgmn_dev,
+static int msm_gemini_ioctl_reset(struct msm_gemini_device *pgmn_dev,
 	void * __user arg)
 {
 	int rc;
@@ -964,7 +964,7 @@ int msm_gemini_ioctl_reset(struct msm_gemini_device *pgmn_dev,
 	return rc;
 }
 
-int msm_gemini_ioctl_set_outmode(struct msm_gemini_device *pgmn_dev,
+static int msm_gemini_ioctl_set_outmode(struct msm_gemini_device *pgmn_dev,
 	void * __user arg)
 {
 	int rc = 0;
@@ -982,7 +982,7 @@ int msm_gemini_ioctl_set_outmode(struct msm_gemini_device *pgmn_dev,
 	return rc;
 }
 
-long __msm_gemini_ioctl(struct msm_gemini_device *pgmn_dev,
+static long __msm_gemini_ioctl(struct msm_gemini_device *pgmn_dev,
 	unsigned int cmd, unsigned long arg)
 {
 	int rc = 0;
